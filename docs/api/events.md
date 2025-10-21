@@ -1,13 +1,14 @@
 # Events (M1)
 
-Envelope:
-```json
-{ "type": "spawn.ready|container.*|export.*", "owner": "string", "ts": 1730000000, "data": {} }
+## SSE endpoint
+`GET /events` — Content-Type: `text/event-stream`. Each line is `data: <json>`, blank line delimited.
+
+Example:
+```bash
+curl -N -H 'Authorization: Bearer <token>' http://localhost:8080/events
 ```
 
 Emitted:
 - `spawn.ready` (on first start via continue/spawn)
 - `container.attached` (when reattaching)
 - `export.created` (Exporter.create)
-
-In M2+, more granular container.* events will be wired to the DockerBackend exec lifecycle.
