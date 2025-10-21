@@ -1,7 +1,6 @@
 # mcp-devhatchery
 
-Streamable-HTTP **MCP** server that spawns per-user dev containers and exposes **shell + filesystem** to MCP clients.
-Built with **FastMCP 2** and **uv** (planned), packaged as a Docker container.
+Streamable-HTTP MCP server that spawns dev containers (shell + filesystem) with persistent workspaces and dual export paths. Built on FastMCP 2 + uv.
 
 > Status: **Design / Plan stage** — no runtime code yet. This repo currently hosts requirements, architecture, plans, and operator docs per our engineering contract (v2.2.0).
 
@@ -22,4 +21,3 @@ ACK CONTRACT v2.2.0. Base branch: `develop`. PRs → `develop`, squash merges, c
 - docs/design/architecture.md
 - docs/plan/high_level_plan.md
 - docs/design/milestones/M1.md
-
