@@ -1,11 +1,9 @@
 <!--
 The PR title will become the squash commit message — make it a Conventional Commit.
-Examples: 
+Examples:
 - feat(warm-pool): add per-image warm pool with APT cache
 - fix(server): include auth_mode in /health response
 - docs(oidc): add M2 design scaffold
-
-Promotion PRs (develop → main): add label `promote` and use **Merge commit**, not Squash.
 -->
 
 ### Summary
