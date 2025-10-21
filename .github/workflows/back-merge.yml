@@ -1,0 +1,39 @@
+name: back-merge-main-to-develop
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  backmerge:
+    if: startsWith(github.event.head_commit.message, 'chore(main): release') || contains(github.event.head_commit.message, 'release-please')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare back-merge branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B chore/back-merge-${GITHUB_SHA} origin/develop
+          git merge --no-ff --no-edit origin/main
+      - name: Create PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: develop
+          branch: chore/back-merge-${{ github.sha }}
+          title: "chore(release): back-merge main → develop"
+          body: "Automated back-merge after release commit on main."
+          labels: chore, from-ai
+      - name: Enable automerge
+        if: steps.cpr.outputs.pull-request-number != ''
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: merge
