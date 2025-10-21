@@ -8,7 +8,12 @@ Status: Accepted.
 - As a user, I can **export** work either to a control-plane export root or directly to a host path mounted as `/export` in my runner.
 - As an operator, I can configure **auth** (none → bearer → OIDC), **image prepull**, **warm pool**, **limits**, and **allowed bind roots**.
 - As a user, I can **list** my containers, volumes, and snapshots, then **reattach** by `workspace_key`.
+- As a client, I want the server to honor **MCP Roots** so I can declare the relevant workspaces and export locations.
+- As a client, I want **files also available as MCP Resources** (selected or templated) so I can pull specific content into model context without running tools.
 - As security, I want **no allow-list inside the runner** but strict host isolation with alias-based bind mounts (RO by default).
+
+## Defaults
+- **Default base image:** `ubuntu:24.04` (LTS), providing a general-purpose dev base.
 
 ## Non-functional requirements
 - Transport: Streamable-HTTP MCP with async readiness events.
