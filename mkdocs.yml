@@ -1,0 +1,45 @@
+site_name: mcp-devhatchery
+repo_url: https://github.com/pvliesdonk/mcp-devhatchery
+repo_name: pvliesdonk/mcp-devhatchery
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.instant
+    - content.code.copy
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+nav:
+  - Overview: index.md
+  - Design:
+    - Requirements: design/requirements.md
+    - Architecture: design/architecture.md
+    - Milestone M1: design/milestones/M1.md
+    - ADRs:
+      - Transport & Runtime: ../decision-log/ADR-0001-transport-and-runtime.md
+      - Storage & Exports: ../decision-log/ADR-0002-storage-and-exports.md
+      - Auth Ladder: ../decision-log/ADR-0003-auth-ladder.md
+  - Operators:
+    - Setup: operators/setup.md
+    - Config: operators/config.md
+    - Security: operators/security.md
+    - Exports: operators/exports.md
+  - API:
+    - Overview: api/overview.md
+    - Tools:
+      - Containers: api/tools/containers.md
+      - Shell: api/tools/shell.md
+      - Filesystem: api/tools/filesystem.md
+      - Volumes: api/tools/volumes.md
+      - Mounts: api/tools/mounts.md
+      - Exports: api/tools/exports.md
+      - Resources: api/tools/resources.md
+      - Snapshots: api/tools/snapshots.md
+    - Events: api/events.md
+  - Clients:
+    - Connect: clients/connect.md
+  - KB:
+    - Index: kb/index.md

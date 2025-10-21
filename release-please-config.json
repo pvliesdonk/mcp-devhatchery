@@ -1,0 +1,15 @@
+{
+  "release-type": "python",
+  "include-v-in-tag": true,
+  "packages": {
+    ".": {
+      "package-name": "mcp-devhatchery",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true
+    }
+  },
+  "changelog-path": "CHANGELOG.md",
+  "extra-files": [
+    "pyproject.toml"
+  ]
+}
