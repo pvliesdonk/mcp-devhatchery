@@ -1,0 +1,20 @@
+name: release-pr-automerge
+
+on:
+  pull_request:
+    types: [opened, labeled, synchronize, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: contains(toJson(github.event.pull_request.labels), 'autorelease: pending') || startsWith(github.event.pull_request.title, 'chore(main): release')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash

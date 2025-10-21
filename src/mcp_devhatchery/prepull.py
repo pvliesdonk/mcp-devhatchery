@@ -1,33 +1,34 @@
 '''
-Image pre-pull helper.
-
-On startup, we pre-pull DEFAULT_IMAGE and any images listed in PREPULL_IMAGES.
-This is a best-effort optimization; failures are swallowed to avoid blocking boot.
+Image pre-pull helper and ensure helper used by server startup.
 '''
 from __future__ import annotations
 
-import asyncio
+import asyncio, json
 from typing import List
-import json
-import docker
+try:
+    import docker  # type: ignore
+except Exception:  # pragma: no cover
+    docker = None
 from .config import settings
 
-
 async def prepull_images() -> None:
-    '''
-    Pull images listed in settings.prepull_images (JSON array) asynchronously.
-
-    Uses asyncio.to_thread to run blocking Docker SDK calls without stalling the loop.
-    '''
-    client = docker.from_env()
+    client = docker.from_env() if docker else None
     try:
         imgs: List[str] = json.loads(settings.prepull_images)
     except Exception:
         imgs = [settings.default_image]
     for img in imgs:
         try:
-            await asyncio.to_thread(client.images.pull, img)
+            if client:
+                await asyncio.to_thread(client.images.pull, img)
         except Exception:
-            # Best-effort: structured logging will land with observability work.
             pass
-    client.close()
+    if client:
+        client.close()
+
+async def ensure_image_prepulled() -> None:
+    # fire-and-forget pre-pull at startup
+    try:
+        await prepull_images()
+    except Exception:
+        pass

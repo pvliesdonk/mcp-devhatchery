@@ -12,6 +12,7 @@ except Exception:  # pragma: no cover
 
 from .exports import EXPORT_ROOT
 from .events import emit
+from .snapshots import read_snapshot_labels
 
 @dataclass
 class ContainerDesc:
@@ -19,7 +20,6 @@ class ContainerDesc:
     image: str
     state: str
     labels: dict[str, str]
-
 
 class ContinueService:
     """Owner-scoped list/continue/reattach utilities.
@@ -79,8 +79,12 @@ class ContinueService:
             except Exception:
                 continue
             name = mf.name.replace('.tar.zst.MANIFEST.json', '')
+            labels = read_snapshot_labels(name)
             out.append({
                 'name': name,
+                'created': data.get('created'),
+                'image': labels.get('image'),
+                'labels': labels,
                 'manifest': data,
                 'archive': str(EXPORT_ROOT / f'{name}.tar.zst'),
             })

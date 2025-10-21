@@ -4,6 +4,8 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch: {}
+  schedule:
+    - cron: '0 9 * * 1'
 
 permissions:
   contents: write
@@ -13,11 +15,12 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
         with:
           release-type: python
           package-name: mcp-devhatchery
           target-branch: main
+          include-v-in-tag: true
           changelog-types: |
             [{
               "type": "feat",
