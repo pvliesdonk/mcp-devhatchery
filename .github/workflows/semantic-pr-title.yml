@@ -1,0 +1,34 @@
+name: semantic-pr-title
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  lint:
+    if: github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title with Conventional Commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            chore
+            refactor
+            test
+            ci
+            build
+            perf
+            revert
+          requireScope: false
+          validateSingleCommit: false
+          wip: false
