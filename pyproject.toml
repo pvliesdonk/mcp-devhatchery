@@ -1,6 +1,5 @@
 [project]
 name = "mcp-devhatchery"
-version = "0.1.1"
 description = "Streamable-HTTP MCP server that spawns per-user dev containers (shell + filesystem) with persistent workspaces and dual export paths."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -14,6 +13,9 @@ dependencies = [
   "docker>=7.0",
   "pyyaml>=6.0"
 ]
+
+# Version is derived from Git tags at build time via setuptools-scm
+dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
@@ -33,6 +35,26 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
 
+# Let setuptools-scm compute the version from tags during build
+[tool.setuptools_scm]
+# optional: configure if needed
+
+# python-semantic-release configuration
+[tool.semantic_release]
+version_source = "tag"
+upload_to_pypi = false
+commit_parser = "angular"
+changelog_file = "CHANGELOG.md"
+build_command = "python -m build"
+tag_format = "v{version}"
+assets = [
+  { path = "dist/*.whl", label = "Wheel" },
+  { path = "dist/*.tar.gz", label = "Source tarball" }
+]
+
+[tool.semantic_release.branches]
+main = { match = "main", prerelease = false }
+
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
