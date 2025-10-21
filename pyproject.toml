@@ -1,6 +1,6 @@
 [project]
 name = "mcp-devhatchery"
-version = "0.0.0"
+version = "0.1.0"
 description = "Streamable-HTTP MCP server that spawns per-user dev containers (shell + filesystem) with persistent workspaces and dual export paths."
 readme = "README.md"
 requires-python = ">=3.12"
