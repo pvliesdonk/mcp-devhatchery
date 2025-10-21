@@ -41,8 +41,6 @@ jobs:
         run: |
           pip install uv
           uv pip install --system build python-semantic-release
-      - name: Build dist
-        run: python -m build
       - name: Run semantic-release publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
