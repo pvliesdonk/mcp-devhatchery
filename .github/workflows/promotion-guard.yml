@@ -1,0 +1,74 @@
+name: promotion-guard
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  guard:
+    name: Ensure develop → main promotion policy
+    if: github.base_ref == 'main' && github.head_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require 'promote' label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = (context.payload.pull_request.labels || []).map(l => l.name);
+            if (!labels.includes('promote')) {
+              core.setFailed("Add the 'promote' label to confirm this is an intentional develop → main promotion. Use **Merge commit**, not Squash.");
+            }
+
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch refs
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main +refs/heads/develop:refs/remotes/origin/develop
+          git fetch --tags --force
+
+      - name: Find last tag on main
+        id: lasttag
+        run: |
+          set -e
+          tag=$(git describe --tags --abbrev=0 origin/main 2>/dev/null || true)
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+
+      - name: Ensure at least one feat|fix since last tag
+        run: |
+          set -e
+          tag='${{ steps.lasttag.outputs.tag }}'
+          if [ -z "$tag" ]; then
+            echo "No previous tag on main; skipping bump guard."
+            exit 0
+          fi
+          echo "Last tag: $tag"
+          # Look at commit subjects from last tag to develop HEAD
+          log=$(git log --pretty=%s "$tag..origin/develop" || true)
+          echo "$log" | sed -n '1,100p'
+          echo "$log" | grep -E '^(feat|fix)(\(.*\))?!?:' >/dev/null || {
+            echo 'No feat/fix found since last tag. Consider adding one, or use Release-As: in promotion body if this is intended.'
+            exit 1
+          }
+
+      - name: Comment guidance (merge method)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const number = context.payload.pull_request.number;
+            const body = [
+              '🔒 Promotion PR detected (develop → main).',
+              '',
+              '- **Use “Merge commit”**, not Squash.',
+              '- The guard verified there is at least one `feat`/`fix` since the last tag.',
+              '- If this is a docs/chore-only promotion, add a `Release-As:` footer in the PR body to force a bump.',
+            ].join('\n');
+            await github.rest.issues.createComment({ owner, repo, issue_number: number, body });
