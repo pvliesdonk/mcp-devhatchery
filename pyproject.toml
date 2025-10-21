@@ -1,0 +1,29 @@
+[project]
+name = "mcp-devhatchery"
+version = "0.0.0"
+description = "Streamable-HTTP MCP server that spawns per-user dev containers (shell + filesystem) with persistent workspaces and dual export paths."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Peter" }]
+license = { text = "MIT" }
+dependencies = [
+  "fastapi>=0.112",
+  "uvicorn>=0.30",
+  "pydantic>=2.7",
+  "python-dotenv>=1.0",
+  "docker>=7.0",
+  "pyyaml>=6.0"
+]
+
+[project.scripts]
+mcp-devhatchery = "mcp_devhatchery.main:run"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
