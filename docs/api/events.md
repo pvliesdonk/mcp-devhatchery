@@ -1,15 +1,13 @@
-# Event Streams
+# Events (M1)
 
-Events are streamed over the MCP transport (Streamable-HTTP).
+Envelope:
+```json
+{ "type": "spawn.ready|container.*|export.*", "owner": "string", "ts": 1730000000, "data": {} }
+```
 
-## Container lifecycle
-- `container.started` {container_id, image, workspace}
-- `container.ready` {container_id}
-- `container.stopped` {container_id, reason}
+Emitted:
+- `spawn.ready` (on first start via continue/spawn)
+- `container.attached` (when reattaching)
+- `export.created` (Exporter.create)
 
-## Export lifecycle
-- `export.started` {workspace, destination}
-- `export.completed` {workspace, destination, bytes, sha256}
-
-## Readiness
-- `spawn.ready` includes attach URL or token for the session.
+In M2+, more granular container.* events will be wired to the DockerBackend exec lifecycle.
