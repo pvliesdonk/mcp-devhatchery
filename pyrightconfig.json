@@ -1,0 +1,10 @@
+{
+  "reportMissingImports": true,
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.12",
+  "exclude": [
+    "**/node_modules",
+    "**/.venv",
+    "**/.eggs"
+  ]
+}
