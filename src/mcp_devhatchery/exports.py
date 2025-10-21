@@ -43,6 +43,7 @@ class Exporter:
         return buf.getvalue()
 
     def create(self, name: str, items: Iterable[ExportItem]) -> Path:
+        from .events import emit  # local import to avoid cycles
         out = self.export_root / f"{name}.tar.zst"
         tmp = out.with_suffix(".tar.zst.tmp")
         raw = self._tar_bytes(items)
@@ -59,4 +60,5 @@ class Exporter:
         }
         (out.parent / (out.name + ".MANIFEST.json")).write_text(json.dumps(manifest, indent=2))
         tmp.replace(out)
+        emit('export.created', owner='system', name=name, path=str(out), manifest=manifest)
         return out

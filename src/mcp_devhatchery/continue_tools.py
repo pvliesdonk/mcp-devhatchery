@@ -11,6 +11,7 @@ except Exception:  # pragma: no cover
     DockerBackend = object  # fallback for type hints
 
 from .exports import EXPORT_ROOT
+from .events import emit
 
 @dataclass
 class ContainerDesc:
@@ -69,9 +70,6 @@ class ContinueService:
         return self._list_volumes_backend(owner)
 
     def snapshots_list(self, owner: str) -> list[dict]:
-        """Discover snapshots as exported archives under EXPORT_ROOT.
-        Files: <name>.tar.zst with sibling <name>.tar.zst.MANIFEST.json
-        """
         out: list[dict] = []
         if not EXPORT_ROOT.exists():
             return out
@@ -89,10 +87,9 @@ class ContinueService:
         return out
 
     def reattach(self, owner: str) -> Optional[str]:
-        """Return container id if a running container for owner exists.
-        """
         for c in self.containers_list(owner):
             if (c.state or '').lower().startswith('running'):
+                emit('container.attached', owner, container_id=c.id)
                 return c.id
         return None
 
@@ -101,4 +98,6 @@ class ContinueService:
         if existing:
             return { 'container_id': existing, 'continued': True }
         res = self._attach_or_spawn(owner)
-        return { 'container_id': str(res.get('id') or res.get('container_id') or ''), 'continued': False }
+        cid = str(res.get('id') or res.get('container_id') or '')
+        emit('spawn.ready', owner, container_id=cid)
+        return { 'container_id': cid, 'continued': False }
