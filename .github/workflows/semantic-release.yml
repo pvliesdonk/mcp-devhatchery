@@ -1,0 +1,47 @@
+name: semantic-release
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ develop ]
+
+permissions:
+  contents: write
+
+jobs:
+  dry-run:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install tools
+        run: |
+          pip install uv
+          uv pip install --system build python-semantic-release
+      - name: Compute next version (noop)
+        run: semantic-release version --noop --print
+
+  publish:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install tools
+        run: |
+          pip install uv
+          uv pip install --system build python-semantic-release
+      - name: Run semantic-release publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release publish

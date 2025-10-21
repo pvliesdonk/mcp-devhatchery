@@ -1,27 +1,15 @@
-name: build-artifacts
+name: build-artifacts (disabled in favor of semantic-release)
 
-on:
-  release:
-    types: [published]
+# NOTE: artifacts are now attached by python-semantic-release in the publish job.
+# This workflow is retained for reference but disabled.
+
+on: { workflow_dispatch: {} }
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install deps
-        run: |
-          pip install uv
-          uv pip install --system build
-      - name: Build wheel/sdist
-        run: python -m build
-      - name: Upload artifacts
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/*
+      - run: echo 'Artifacts are handled by semantic-release.'
